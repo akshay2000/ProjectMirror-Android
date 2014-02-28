@@ -6,12 +6,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
-import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
 /* Note: This is DataContext in .NET world!
  * And DAO objects represent the LINQ Tables */
+@SuppressWarnings("rawtypes")
 public class DatabaseHelperBase extends OrmLiteSqliteOpenHelper {
 
 	private static String dbName = "main.db";
@@ -42,7 +42,7 @@ public class DatabaseHelperBase extends OrmLiteSqliteOpenHelper {
 		DatabaseHelperBase.tables = tables;
 	}
 
-	private Dao<SyncTimeStamp, String> syncTimeStampDao;
+//	private Dao<SyncTimeStamp, String> syncTimeStampDao;
 	
 
 	public DatabaseHelperBase(Context context) {
@@ -53,6 +53,7 @@ public class DatabaseHelperBase extends OrmLiteSqliteOpenHelper {
 //		super(context, dbName, null, dbVersion);
 //	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void onCreate(SQLiteDatabase sqLiteDatabase, ConnectionSource connectionSource) {
 		Log.e("ColorsMe", "OncreateWasCalled");

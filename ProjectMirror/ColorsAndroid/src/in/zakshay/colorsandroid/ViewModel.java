@@ -2,12 +2,12 @@ package in.zakshay.colorsandroid;
 
 import java.util.List;
 
-import android.R.integer;
 import android.util.Log;
 
 import in.zakshay.colorsandroid.Models.ToDoCategory;
 import in.zakshay.projectmirror.*;
 
+@SuppressWarnings("unused")
 public class ViewModel {
 	
 	private ColorsApp appContext = ColorsApp.getInstance();

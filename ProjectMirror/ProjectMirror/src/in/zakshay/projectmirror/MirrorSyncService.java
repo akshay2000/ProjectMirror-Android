@@ -12,6 +12,7 @@ import android.R.integer;
 import android.content.Context;
 import android.util.Log;
 
+@SuppressWarnings("unused")
 public class MirrorSyncService {
 	
 	private DatabaseHelperBase dbHelper = null;
@@ -36,6 +37,7 @@ public class MirrorSyncService {
 		fallOfHumanity = calendar.getTime();
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public void configureSQLite(Context passedContext, String dbName, int dbVersion, Class...tables ){
 		Log.e("ColorsMe", "Configuring");
 		DatabaseHelperBase.setDbName(dbName);
@@ -54,7 +56,7 @@ public class MirrorSyncService {
 	
 	//CRUD Operations
 	
-	public <TEntity extends SyncableBase> List<TEntity> loadItems(Class clazz) {
+	public <TEntity extends SyncableBase> List<TEntity> loadItems(Class<TEntity> clazz) {
 		
 		
 		DatabaseHelperBase dbHelper = getDbHelper();
@@ -66,22 +68,6 @@ public class MirrorSyncService {
 			e.printStackTrace();
 			return new ArrayList<TEntity>();
 		}		
-	}
-	
-	public <TEntity extends SyncableBase> TEntity loadItemById(TEntity dummyEntity, int id) {
-		TEntity item = null;
-		
-		DatabaseHelperBase dbHelper = getDbHelper();
-		Dao<TEntity, Integer> dao;
-		try {
-			dao = dbHelper.getDao(dummyEntity.getClass());
-			TEntity entity = dao.queryForId(id);
-			Log.e("ColorsMe", "Is the list done?");
-		} catch (SQLException e){
-			e.printStackTrace();
-		}
-		return item;
-		
 	}
 	
 	public <TEntity extends SyncableBase> void updateItem(TEntity itemToUpdate){
