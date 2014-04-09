@@ -12,10 +12,9 @@
         android:id="@+id/listViewToDo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:listitem="@layout/row_to_do"
         android:divider="#00000000"
         android:dividerHeight="0dp"
-        >
+        tools:listitem="@layout/row_to_do" >
     </ListView>
 
     <Button

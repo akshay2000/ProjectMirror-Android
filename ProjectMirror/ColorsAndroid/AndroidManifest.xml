@@ -7,15 +7,14 @@
     <uses-sdk
         android:minSdkVersion="9"
         android:targetSdkVersion="19" />
-    
-    <uses-permission
-        android:name="android.permission.INTERNET" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name="in.zakshay.colorsandroid.ColorsApp"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:name="ColorsApp"
         android:theme="@style/AppTheme" >
         <activity
             android:name="in.zakshay.colorsandroid.MainActivity"
@@ -25,6 +24,11 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="in.zakshay.colorsandroid.DetailsActivity"
+            android:label="@string/title_activity_details"
+            android:theme="@style/Theme.AppCompat" >
         </activity>
     </application>
 

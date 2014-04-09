@@ -1,0 +1,44 @@
+<!-- <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="in.zakshay.colorsandroid.DetailsActivity"
+    tools:ignore="MergeRootFrame" /> -->
+    
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="in.zakshay.colorsandroid.DetailsActivity$PlaceholderFragment" >
+
+    <EditText
+        android:id="@+id/categoryNameET"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" 
+        android:hint="Category Name"/>
+
+    <EditText
+        android:id="@+id/categoryColorET"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/categoryNameET"
+        android:layout_below="@+id/categoryNameET"
+        android:ems="10" 
+        android:hint="Category Color"/>
+
+    <Button
+        android:id="@+id/saveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/categoryColorET"
+        android:layout_alignParentBottom="true"
+        android:text="Save"
+        android:onClick="saveCategory" />
+
+</RelativeLayout>
+

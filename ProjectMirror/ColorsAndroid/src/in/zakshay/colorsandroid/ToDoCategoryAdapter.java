@@ -1,13 +1,11 @@
 package in.zakshay.colorsandroid;
 
 import in.zakshay.colorsandroid.Models.ToDoCategory;
-import android.R.string;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.ShapeDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +37,8 @@ public class ToDoCategoryAdapter extends ArrayAdapter<ToDoCategory> {
 		View circeView = row.findViewById(R.id.colorCircle);
 		Drawable circle = circeView.getBackground();
 		GradientDrawable circleShapeDrawable = (GradientDrawable) circle;
-		circleShapeDrawable.setColor(getColor(currentCategory.getCategoryColor()));
+		circleShapeDrawable.setColor(getColor(currentCategory
+				.getCategoryColor()));
 		return row;
 	}
 

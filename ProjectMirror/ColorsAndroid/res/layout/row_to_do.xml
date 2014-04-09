@@ -3,15 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="30dp"
     android:orientation="horizontal" >
-    
+
     <View
-        android:id="@+id/colorCircle" 
+        android:id="@+id/colorCircle"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_margin="5dp"
-        android:background="@drawable/circle"
-        />
-    
+        android:background="@drawable/circle" />
+
     <TextView
         android:id="@+id/toDoText"
         android:layout_width="match_parent"
