@@ -15,6 +15,7 @@ local.properties
 .classpath
 .settings/
 .loadpath
+AzureKeys.json
 
 # External tool builders
 .externalToolBuilders/

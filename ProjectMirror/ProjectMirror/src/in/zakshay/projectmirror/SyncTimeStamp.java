@@ -7,6 +7,16 @@ import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable
 public class SyncTimeStamp {
+	
+	//Constructor
+	public SyncTimeStamp()
+	{}
+	
+	public SyncTimeStamp(String entityName, Date lastSynced){
+		this.entityName = entityName;
+		this.lastSynced = lastSynced;
+	}
+	
 	@DatabaseField(id = true)
 	private String entityName;
 	
