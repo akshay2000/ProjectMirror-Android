@@ -26,7 +26,6 @@ public class MainActivity extends Activity {
 		mAdapter = new ToDoCategoryAdapter(this, R.layout.row_to_do);
 		ListView categoriesListView = (ListView) findViewById(R.id.listViewToDo);
 		categoriesListView.setAdapter(mAdapter);
-		loadAdapter();
 
 		categoriesListView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -47,7 +46,13 @@ public class MainActivity extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-
+	
+	@Override
+	protected void onStart(){
+		super.onStart();
+		loadAdapter();
+	}
+	
 	public void syncit(View view) {
 		try {
 			reloadCategories();
@@ -55,6 +60,15 @@ public class MainActivity extends Activity {
 			e.printStackTrace();
 		}
 	}
+	
+	public void onAddCategoryClick(View view){
+		GlobalVariables.currenToDoCategory = new ToDoCategory();
+		Intent intent = new Intent(getApplicationContext(),
+				DetailsActivity.class);
+		startActivity(intent);
+	}
+	
+	
 
 	private void reloadCategories() throws SQLException {
 		appContext.getMirrorSyncService().synchronize(ToDoCategory.class,

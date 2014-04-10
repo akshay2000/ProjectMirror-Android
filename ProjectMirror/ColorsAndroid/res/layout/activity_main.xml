@@ -26,4 +26,14 @@
         android:onClick="syncit"
         android:text="Sync" />
 
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/button1"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/listViewToDo"
+        android:onClick="onAddCategoryClick"
+        android:text="Add New" />
+
 </RelativeLayout>
