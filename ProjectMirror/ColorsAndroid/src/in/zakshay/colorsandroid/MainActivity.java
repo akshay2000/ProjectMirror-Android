@@ -158,8 +158,8 @@ public class MainActivity extends Activity {
 	}
 	
 	private void login() {
-		// Login using the Google provider.
-	    mirrorService.authenticate(MobileServiceAuthenticationProvider.Google,
+		// Login using the Microsoft provider.
+	    mirrorService.authenticate(MobileServiceAuthenticationProvider.MicrosoftAccount,
 	            new UserAuthenticationCallback() {
 
 	                @Override
