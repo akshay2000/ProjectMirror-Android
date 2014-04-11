@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
@@ -16,6 +17,8 @@ import com.microsoft.windowsazure.mobileservices.*;
 
 import android.R.integer;
 import android.R.string;
+import android.accounts.Account;
+import android.app.Activity;
 import android.content.ClipData.Item;
 import android.content.Context;
 import android.util.Log;
@@ -67,6 +70,25 @@ public class MirrorSyncService {
 		}
 	}
 
+	// Authentication region
+	public void authenticate(MobileServiceAuthenticationProvider provider,
+			UserAuthenticationCallback callback) {
+		mobileServiceClient.login(provider, callback);
+	}
+
+	public void authenticate(MobileServiceAuthenticationProvider provider,
+			JsonObject oAuthToken, UserAuthenticationCallback callback) {
+		mobileServiceClient.login(provider, oAuthToken, callback);
+	}
+
+	public void authenticate(Activity activity, Account account, String scopes,
+			UserAuthenticationCallback callback) {
+		mobileServiceClient.loginWithGoogleAccount(activity, account, scopes,
+				callback);
+	}
+	
+	//Authentication region complete
+
 	private <TEntity extends SyncableBase> Date getLastSyncedTime(
 			Class<TEntity> clazz) {
 		DatabaseHelperBase dbHelperBase = getDbHelper();
@@ -105,7 +127,7 @@ public class MirrorSyncService {
 
 	public <TEntity extends SyncableBase> void synchronize(
 			final Class<TEntity> clazz, final SyncCallback callback)
-					throws SQLException {
+			throws SQLException {
 		DatabaseHelperBase dbHelper = getDbHelper();
 		final Dao<TEntity, Integer> localTable = dbHelper.getDao(clazz);
 
@@ -128,45 +150,44 @@ public class MirrorSyncService {
 		// NOTE: It will remain empty until callback is returned!
 		final List<TEntity> newRemoteItems = new ArrayList<TEntity>();
 		remoteTable.where().field("lastSynchronized").gt(currentTimeStamp)
-		.execute(new TableQueryCallback<TEntity>() {
-			public void onCompleted(List<TEntity> result, int count,
-					Exception exception, ServiceFilterResponse response) {
-				if (exception == null) {
-					newRemoteItems.clear();
-					for (TEntity item : result) {
-						newRemoteItems.add(item);
-					}
-					resolveConflicts(newLocalItems, newRemoteItems); // Modify
-					// the
-					// lists
-					// directly
+				.execute(new TableQueryCallback<TEntity>() {
+					public void onCompleted(List<TEntity> result, int count,
+							Exception exception, ServiceFilterResponse response) {
+						if (exception == null) {
+							newRemoteItems.clear();
+							for (TEntity item : result) {
+								newRemoteItems.add(item);
+							}
+							resolveConflicts(newLocalItems, newRemoteItems); // Modify
+																				// the
+																				// lists
+																				// directly
 
-					try {
-						newTimeStamp[0] = applyRemoteToLocal(
-								newRemoteItems, clazz, newTimeStamp[0]);
-						if (newLocalItems.isEmpty()) {// The list is
-							// empty. No
-							// need to
-							// continue the
-							// method. Do
-							// maintenance
-							// now.
-							setLastSyncedTime(clazz, newTimeStamp[0]);
-							callback.onSyncComplete(null);
+							try {
+								newTimeStamp[0] = applyRemoteToLocal(
+										newRemoteItems, clazz, newTimeStamp[0]);
+								if (newLocalItems.isEmpty()) {// The list is
+																// empty. No
+																// need to
+																// continue the
+																// method. Do
+																// maintenance
+																// now.
+									setLastSyncedTime(clazz, newTimeStamp[0]);
+									callback.onSyncComplete(null);
+								} else {
+									applyLocalToRemote(newLocalItems, clazz,
+											newTimeStamp[0], callback);
+								}
+
+							} catch (SQLException e) {
+								callback.onSyncComplete(e);
+							}
 						} else {
-							applyLocalToRemote(newLocalItems, clazz,
-									newTimeStamp[0], callback);
+							callback.onSyncComplete(exception);
 						}
-
-					} catch (SQLException e) {
-						callback.onSyncComplete(e);
 					}
-				} else {
-					callback.onSyncComplete(exception);
-				}
-			}
-		});
-		Log.e("SyncMe", "Sync Success");
+				});
 	}
 
 	private <TEntity extends SyncableBase> void resolveConflicts(
@@ -178,8 +199,8 @@ public class MirrorSyncService {
 				if (remoteItem.getRemoteId().equals(localId)) {
 					boolean removed = localItem.getLastModified().after(
 							remoteItem.getLastModified()) ? newRemoteItems
-									.remove(remoteItem) : newLocalItems
-									.remove(localItem);
+							.remove(remoteItem) : newLocalItems
+							.remove(localItem);
 				}
 			}
 		}
@@ -211,7 +232,7 @@ public class MirrorSyncService {
 	private <TEntity extends SyncableBase> void applyLocalToRemote(
 			List<TEntity> newLocalItems, final Class<TEntity> clazz,
 			Date currentTimeStamp, final SyncCallback callback)
-					throws SQLException {
+			throws SQLException {
 		DatabaseHelperBase dbHelper = getDbHelper();
 		final Dao<TEntity, Integer> localTable = dbHelper.getDao(clazz);
 
@@ -226,51 +247,51 @@ public class MirrorSyncService {
 			if (localItem.getRemoteId() == null) {
 				remoteTable.insert(localItem,
 						new TableOperationCallback<TEntity>() {
-					public void onCompleted(TEntity entity,
-							Exception exception,
-							ServiceFilterResponse response) {
-						countdown[0]--;
-						if (exception == null) {
-							try {
-								localTable.update(entity);
-								newTimeStamp[0] = newTimeStamp[0]
-										.after(entity
-												.getLastSynchronized()) ? newTimeStamp[0]
-														: entity.getLastSynchronized();
-							} catch (SQLException e) {
-								e.printStackTrace();
+							public void onCompleted(TEntity entity,
+									Exception exception,
+									ServiceFilterResponse response) {
+								countdown[0]--;
+								if (exception == null) {
+									try {
+										localTable.update(entity);
+										newTimeStamp[0] = newTimeStamp[0]
+												.after(entity
+														.getLastSynchronized()) ? newTimeStamp[0]
+												: entity.getLastSynchronized();
+									} catch (SQLException e) {
+										e.printStackTrace();
+									}
+								}
+								if (countdown[0] == 0) {
+									setLastSyncedTime(clazz, newTimeStamp[0]);
+									callback.onSyncComplete(null);
+								}
 							}
-						}
-						if (countdown[0] == 0) {
-							setLastSyncedTime(clazz, newTimeStamp[0]);
-							callback.onSyncComplete(null);
-						}
-					}
-				});
+						});
 			} else {
 				remoteTable.update(localItem,
 						new TableOperationCallback<TEntity>() {
-					public void onCompleted(TEntity entity,
-							Exception exception,
-							ServiceFilterResponse response) {
-						countdown[0]--;
-						if (exception == null) {
-							try {
-								localTable.update(entity);
-								newTimeStamp[0] = newTimeStamp[0]
-										.after(entity
-												.getLastSynchronized()) ? newTimeStamp[0]
-														: entity.getLastSynchronized();
-							} catch (SQLException e) {
-								e.printStackTrace();
+							public void onCompleted(TEntity entity,
+									Exception exception,
+									ServiceFilterResponse response) {
+								countdown[0]--;
+								if (exception == null) {
+									try {
+										localTable.update(entity);
+										newTimeStamp[0] = newTimeStamp[0]
+												.after(entity
+														.getLastSynchronized()) ? newTimeStamp[0]
+												: entity.getLastSynchronized();
+									} catch (SQLException e) {
+										e.printStackTrace();
+									}
+								}
+								if (countdown[0] == 0) {
+									setLastSyncedTime(clazz, newTimeStamp[0]);
+									callback.onSyncComplete(null);
+								}
 							}
-						}
-						if (countdown[0] == 0) {
-							setLastSyncedTime(clazz, newTimeStamp[0]);
-							callback.onSyncComplete(null);
-						}
-					}
-				});
+						});
 			}
 		}
 	}

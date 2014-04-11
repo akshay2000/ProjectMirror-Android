@@ -55,10 +55,10 @@ public class DetailsActivity extends ActionBarActivity {
 		category.setCategoryColor(categoryColorET.getText().toString());
 		
 		if(category.getLocalId() < 1){
-			ColorsApp.getInstance().getMirrorSyncService().addItem(category);
+			MainActivity.getmirrorService().addItem(category);
 		}
 		else {
-			ColorsApp.getInstance().getMirrorSyncService().updateItem(category);
+			MainActivity.getmirrorService().updateItem(category);
 		}
 		finish();
 	}
